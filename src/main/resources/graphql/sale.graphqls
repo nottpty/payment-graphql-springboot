@@ -1,0 +1,5 @@
+type Sale {
+    datetime: DateTime!
+    sales: Float!
+    points: Int!
+}

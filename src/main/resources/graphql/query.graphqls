@@ -1,0 +1,10 @@
+type Query {
+    getSaleByStartDateTimeToEndDateTime(startDateTime: DateTime!, endDateTime: DateTime!, order: ListOrder): [Sale!]!
+    getPaymentByPaymentMethod(filter:PaymentFilter!): [Payment]
+    getAllPayment: [Payment]
+}
+
+enum ListOrder{
+    ASC,
+    DESC
+}

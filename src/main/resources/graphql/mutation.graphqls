@@ -1,0 +1,12 @@
+scalar DateTime
+
+type Mutation {
+    createPayment(input: PaymentInput!): NewPayment
+}
+
+input PaymentInput {
+    price: Float!
+    priceModifier: Float!
+    paymentMethod: PaymentMethod!
+    datetime: DateTime!
+}

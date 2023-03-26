@@ -1,0 +1,30 @@
+type Payment {
+    id: ID!
+    price: Float!
+    priceModifier: Float!
+    paymentMethod: PaymentMethod!
+    datetime: DateTime!
+    finalPrice: Float!
+    points: Float!
+}
+
+enum PaymentMethod {
+    CASH
+    CASH_ON_DELIVERY
+    VISA
+    MASTERCARD
+    AMEX
+    JCB
+}
+
+input PaymentFilter {
+    paymentMethod: PaymentMethod
+}
+
+type NewPayment {
+    id: ID!
+    paymentMethod: PaymentMethod!
+    datetime: DateTime!
+    finalPrice: Float!
+    points: Float!
+}
