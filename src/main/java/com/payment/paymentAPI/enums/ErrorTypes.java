@@ -9,3 +9,4 @@ public enum ErrorTypes implements ErrorClassification {
     NOT_FOUND ,
     INTERNAL_ERROR
 }
+

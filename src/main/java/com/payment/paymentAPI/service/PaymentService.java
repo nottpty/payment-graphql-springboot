@@ -2,6 +2,7 @@ package com.payment.paymentAPI.service;
 
 import com.payment.paymentAPI.enums.ListOrder;
 import com.payment.paymentAPI.enums.PaymentMethodEnum;
+import com.payment.paymentAPI.exception.PaymentValidationException;
 import com.payment.paymentAPI.model.Payment;
 import com.payment.paymentAPI.model.PaymentMethod;
 import com.payment.paymentAPI.repository.PaymentMethodRepository;
@@ -27,7 +28,12 @@ public class PaymentService {
     PaymentMethodRepository paymentMethodRepository;
 
     public NewPayment createPayment(PaymentInput paymentInput) {
-        PaymentMethod paymentMethod = paymentMethodRepository.findByName(paymentInput.getPaymentMethod()).orElseThrow(() -> new IllegalArgumentException("Invalid payment method"));
+        if (paymentInput.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            throw new PaymentValidationException("The price input value must be greater than 0");
+        }
+        PaymentMethod paymentMethod = paymentMethodRepository.findByName(paymentInput.getPaymentMethod()).orElseThrow(()
+                -> new PaymentValidationException("Invalid payment method"));
+        verifyPriceModifier(paymentMethod, paymentInput.getPriceModifier());
 
         Payment paymentIn = new Payment();
         paymentIn.setPaymentMethod(paymentInput.getPaymentMethod());
@@ -40,6 +46,14 @@ public class PaymentService {
         paymentIn.setPoints(points);
         Payment paymentOut = paymentRepository.save(paymentIn);
         return new NewPayment(paymentOut);
+    }
+
+    private void verifyPriceModifier(PaymentMethod paymentMethod, BigDecimal priceModifier) {
+        BigDecimal maxMod = paymentMethod.getPriceModifierMax();
+        BigDecimal minMod = paymentMethod.getPriceModifierMin();
+        if (priceModifier.compareTo(minMod) < 0 || priceModifier.compareTo(maxMod) > 0) {
+            throw new PaymentValidationException("Invalid price modifier");
+        }
     }
 
     public Iterable<Sale> getSaleByStartDateTimeToEndDateTime(OffsetDateTime startDateTime,
